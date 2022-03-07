@@ -116,18 +116,12 @@ public class Main implements AM {
             System.out.println(i+" sent.");
         }
         
+        BufferedImage res;
         for(int i = 0; i < threads; i++){
             System.out.println(i+" starts");
             var image = ((Image_SRZ)channels.get(i).readObject()).getImage();
             ImageIO.write(image, "png", new File(i+"blur.png"));
             System.out.println(i+" ends");
-            reses.add(image);
-        }
-        BufferedImage res;
-        for(int i = 0; i < threads; i++){
-            System.out.println(i+" point get image progress");
-            var image = ((Image_SRZ)channels.get(i).readObject()).getImage();
-            System.out.println(i+" point get image success");
             reses.add(image);
         }
         

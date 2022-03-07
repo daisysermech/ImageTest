@@ -7,7 +7,6 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.Base64;
 import javax.imageio.ImageIO;
 import parcs.*;
@@ -26,11 +25,8 @@ public class Algorithm implements AM
             System.out.println("image retrieved");
             int rad = info.parent.readInt();
             System.out.println("Readed radius - "+rad);
-            ImageIO.write(img.getImage(), "png", new File("pre.png"));
             var res =blurredImage(img.getImage(),rad);
-            ImageIO.write(res, "png", new File("test.png"));
-            img = new Image_SRZ(res);
-            info.parent.write(img);
+            info.parent.write(new Image_SRZ(res));
             System.out.println("sent.");
         }catch(Exception e)
         {
@@ -39,7 +35,7 @@ public class Algorithm implements AM
         }
     }
     
-    public static BufferedImage blurredImage(BufferedImage source, double radius)
+    public static BufferedImage blurredImage(BufferedImage source, int radius)
     {
         if (radius == 0) {
         return source;
