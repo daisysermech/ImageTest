@@ -23,10 +23,22 @@ public class Algorithm implements AM
             System.out.println(o);
             Image_SRZ img = (Image_SRZ)o;
             System.out.println("image retrieved");
-            int rad = info.parent.readInt();
-            System.out.println("Readed radius - "+rad);
-            var res =blurredImage(img.getImage(),rad);
-            info.parent.write(new Image_SRZ(res));
+            int radius = info.parent.readInt();
+            System.out.println("Readed radius - "+radius);
+            
+            int size = radius * 2 + 1;
+    float weight = 1.0f / (size * size);
+    float[] data = new float[size * size];
+
+    for (int i = 0; i < data.length; i++) {
+        data[i] = weight;
+    }
+
+    Kernel kernel = new Kernel(size, size, data);
+    ConvolveOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+    BufferedImage i = op.filter(img.getImage(), null);
+            
+            info.parent.write(new Image_SRZ(i));
             System.out.println("sent.");
         }catch(Exception e)
         {
@@ -35,7 +47,7 @@ public class Algorithm implements AM
         }
     }
     
-    public static BufferedImage blurredImage(BufferedImage source, int radius)
+    public BufferedImage blurredImage(BufferedImage source, int radius)
     {
         if (radius == 0) {
         return source;
@@ -80,7 +92,7 @@ public class Algorithm implements AM
         source.getHeight());
     }
 
-    public static BufferedImage paddedImage(BufferedImage source, int padding)
+    public BufferedImage paddedImage(BufferedImage source, int padding)
     {
         if (padding == 0) {
         return source;
@@ -110,7 +122,7 @@ public class Algorithm implements AM
         return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
         
-    public static String imgToBase64String(BufferedImage img, String formatName)
+    public String imgToBase64String(BufferedImage img, String formatName)
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try
