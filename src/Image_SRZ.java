@@ -18,7 +18,7 @@ class Image_SRZ implements Serializable {
     
     public BufferedImage getImage()
     {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, width, height, pixels, 0, width);
         return image;
     }

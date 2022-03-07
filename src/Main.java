@@ -42,18 +42,12 @@ public class Main implements AM {
         }
         System.out.println("Read file: successful.");
         long tStart = System.nanoTime();
-        BufferedImage res = solve(info, link, radius);
+        solve(info, link, radius);
         long tEnd = System.nanoTime();
         System.out.println("time = " + ((tEnd - tStart) / 1000000) + "ms");
-        try{
-        ImageIO.write(res, "PNG", new File("combined.png"));
-        }catch (Exception e)
-        {
-            System.out.println("Error saving combined image.");
-        }
     }
     
-    public static BufferedImage solve(AMInfo info, String imageUrl, int radius)
+    public static void solve(AMInfo info, String imageUrl, int radius)
     {
         List<BufferedImage> reses = new ArrayList<>();
         List<point> points = new ArrayList<>();
@@ -71,80 +65,26 @@ public class Main implements AM {
             input.coerceData(true);
             System.out.println("Input image read successfully.");
             
-            int w = input.getWidth()/threads;
-            int h = input.getHeight()/threads;
-            w*=threads;
-            h*=threads;
-            BufferedImage outputImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-            outputImage.getGraphics().drawImage(input.getScaledInstance(w, h, Image.SCALE_SMOOTH), 0, 0, null);
-            input=outputImage;
-            
-        BufferedImage imgs[] = new BufferedImage[threads];
-
-        int subimage_Width = input.getWidth() / threads;
-        int subimage_Height = input.getHeight();
-
-        int offset=(int) (subimage_Width*0.05);
-        int current_img = 0;
-
-        for (int j = 0; j < threads; j++)
-        {
-        imgs[current_img] = new BufferedImage(subimage_Width+offset, subimage_Height,BufferedImage.TYPE_INT_ARGB);
-        Graphics2D img_creator = imgs[current_img].createGraphics();
-        int src_first_x = subimage_Width * j;
-        int src_first_y = subimage_Height;
-
-        int dst_corner_x = subimage_Width * j + subimage_Width;
-        int dst_corner_y = subimage_Height + subimage_Height;
-
-        img_creator.drawImage(input, 0, 0, subimage_Width+offset, subimage_Height,
-                src_first_x, src_first_y, dst_corner_x+offset, dst_corner_y, null);
-        current_img++;
-        }
-        System.out.println("Image cutted: success.");
-        //parallel blur
         for (int i = 0; i < threads; i++){
             points.add(info.createPoint());
             channels.add(points.get(i).createChannel());
             points.get(i).execute("Algorithm");
-            Image_SRZ im = new Image_SRZ(imgs[i]);
-            channels.get(i).write(im);
+            channels.get(i).write(new Image_SRZ(input));
             channels.get(i).write(radius);
+            System.out.println(i+" sent.");
         }
         
-        System.out.println("Images blurred.");
-        BufferedImage res;
         for(int i = 0; i < threads; i++){
-            System.out.println(i+" point get image progress");
+            System.out.println(i+" starts");
             var image = ((Image_SRZ)channels.get(i).readObject()).getImage();
-            System.out.println(i+" point get image success");
+            System.out.println(i+" ends");
             reses.add(image);
         }
-        
-            System.out.println("Blurred images recieved success.");
-            	//unite img
-        w = input.getWidth();
-        h = input.getHeight();
-        res = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D  g = (Graphics2D)res.getGraphics();
-        g.setComposite(AlphaComposite.Src);
-        w /=reses.size();
-        for(int i = 0; i < reses.size(); i++)
-        {
-            BufferedImage bi = (BufferedImage)reses.get(i);
-            g.drawImage(bi, w*i, 0, null);
-        }
-        
-        System.out.println("Images glued success.");
-        g.dispose();
-        return res;
         
         }
         catch(Exception e)
         {
             e.printStackTrace(System.out);
-            return null;
         }
         
     }

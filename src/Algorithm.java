@@ -23,18 +23,15 @@ public class Algorithm implements AM
             Object o = info.parent.readObject();
             System.out.println(o);
             Image_SRZ img = (Image_SRZ)o;
-            ImageIO.write(img.getImage(), "png", new File("proc.png"));
+            System.out.println("image retrieved");
             int rad = info.parent.readInt();
             System.out.println("Readed radius - "+rad);
-            System.out.println("image retrieved");
-            var blurred = blurredImage(img.getImage(),rad);
-            img = new Image_SRZ(blurred);
             info.parent.write(img);
-            System.out.println("saved and thats all.");
+            System.out.println("sent.");
         }catch(Exception e)
         {
             System.out.println("ERROR");
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
     
