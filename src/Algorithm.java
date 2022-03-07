@@ -26,7 +26,10 @@ public class Algorithm implements AM
             System.out.println("image retrieved");
             int rad = info.parent.readInt();
             System.out.println("Readed radius - "+rad);
-            img = new Image_SRZ(blurredImage(img.getImage(),rad));
+            ImageIO.write(img.getImage(), "png", new File("pre.png"));
+            var res =blurredImage(img.getImage(),rad);
+            ImageIO.write(res, "png", new File("test.png"));
+            img = new Image_SRZ(res);
             info.parent.write(img);
             System.out.println("sent.");
         }catch(Exception e)
