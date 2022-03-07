@@ -110,8 +110,8 @@ public class Main implements AM {
             points.add(info.createPoint());
             channels.add(points.get(i).createChannel());
             points.get(i).execute("Algorithm");
-            ImageIO.write(imgs[i], "png", new File(i+"pre.png"));
-            channels.get(i).write(new Image_SRZ(imgs[i]));
+            ImageIO.write(input, "png", new File(i+"pre.png"));
+            channels.get(i).write(new Image_SRZ(input));
             channels.get(i).write(radius);
             System.out.println(i+" sent.");
         }
@@ -137,17 +137,17 @@ public class Main implements AM {
         h = input.getHeight();
         res = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D  g = (Graphics2D)res.getGraphics();
-        g.setComposite(AlphaComposite.Src);
-        w /=reses.size();
-        for(int i = 0; i < reses.size(); i++)
-        {
-            BufferedImage bi = (BufferedImage)reses.get(i);
-            g.drawImage(bi, w*i, 0, null);
-        }
+//        Graphics2D  g = (Graphics2D)res.getGraphics();
+//        g.setComposite(AlphaComposite.Src);
+//        w /=reses.size();
+//        for(int i = 0; i < reses.size(); i++)
+//        {
+//            BufferedImage bi = (BufferedImage)reses.get(i);
+//            g.drawImage(bi, w*i, 0, null);
+//        }
         
         System.out.println("Images glued success.");
-        g.dispose();
+        //g.dispose();
         return res;
         }
         catch(Exception e)
